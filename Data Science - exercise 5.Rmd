@@ -1,0 +1,67 @@
+---
+title: "my_R_Exercise"
+author: "Robin Hegenberg"
+date: "2023-05-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("ggplot2", repos = "https://ftp.gwdg.de/pub/misc/cran/")
+install.packages("ggstatsplot", repos = "https://ftp.gwdg.de/pub/misc/cran/")
+library(ggplot2) #load package
+library(ggstatsplot) #load package
+```
+
+## Showcasing the Iris dataset
+
+This is my R markdown, featuring the iris dataset:
+
+```{r iris}
+data("iris") #load dataset
+summary(iris) #display key values
+```
+```{r plot}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) + 
+  geom_point(aes(color = Species)) + #scatter plot, else use geom_histogram
+  geom_smooth() #regression line
+```
+```{r plot method lm}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) + 
+  geom_point(aes(color = Species)) + #scatter plot, else use geom_histogram
+  geom_smooth(method = lm) #regression line
+```
+```{r pearson cor}
+my_pearson_cor <- cor(iris$Sepal.Length, iris$Sepal.Width, method = "pearson")
+my_pearson_cor
+```
+```{r boxplot}
+ggplot(iris, aes(x = Species, y = Petal.Width)) +
+  geom_boxplot(aes(fill = Species))
+```
+```{r better boxplot}
+ggbetweenstats(
+  data = iris,
+  x = Species,
+  y = Petal.Width,
+  title = "Iris dataset"
+)
+```
+```{r histogram}
+ggplot(iris, aes(x = Petal.Width)) +
+  geom_histogram(aes(fill = Species), binwidth = 0.1) + #binwidth groups close values together into 1 bar
+  facet_wrap(~ Species) #make x graph for each Species
+```
+```{r histogram version 2}
+ggplot(iris, aes(x = Petal.Width)) +
+  geom_histogram(aes(fill = Species), binwidth = 0.4) + #binwidth groups close values together into 1 bar
+  facet_wrap(~ Species) #make x graph for each Species
+```
+```{r ttest}
+setosa_petal_width <- iris$Petal.Width[iris$Species == "setosa"]
+virginica_petal_width <- iris$Petal.Width[iris$Species == "virginica"]
+t.test(setosa_petal_width, virginica_petal_width)
+```
+p-value < 2.2e-16 is very small (< 0.05), so there is a statistically significant difference between setosa and virginica in Petal.Width (which is expected, looking at the graphs)
+
+
